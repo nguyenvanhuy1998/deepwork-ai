@@ -1,50 +1,108 @@
-# Welcome to your Expo app 👋
+# DeepWork AI
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A productivity application designed to help users manage tasks efficiently and maintain focus during work sessions. The app leverages artificial intelligence to prioritize tasks and provide personalized productivity insights.
 
-## Get started
+## Features
 
-1. Install dependencies
+- **Task Management**: Create, organize, and prioritize tasks
+- **Focus Sessions**: Timed focus sessions with customizable durations
+- **Productivity Insights**: AI-generated recommendations based on work patterns
+- **Progress Tracking**: Visualize productivity trends and achievements
 
-   ```bash
-   npm install
-   ```
+## Tech Stack
 
-2. Start the app
+- **Frontend**: React Native with TypeScript, Expo, and Expo Router
+- **Backend/Database**: Supabase
+- **UI Framework**: React Native Paper
+- **AI Processing**: DeepSeek
 
-   ```bash
-    npx expo start
-   ```
+## Getting Started
 
-In the output, you'll find options to open the app in a
+### Prerequisites
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Node.js (v14 or later)
+- npm or yarn
+- Expo CLI
+- Supabase account
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### Installation
 
-## Get a fresh project
-
-When you're ready, run:
-
+1. Clone the repository:
 ```bash
-npm run reset-project
+git clone https://github.com/yourusername/deepwork-ai.git
+cd deepwork-ai
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
 
-## Learn more
+3. Create a `.env` file in the root directory with your Supabase credentials:
+```
+EXPO_PUBLIC_SUPABASE_URL=your_supabase_url
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+4. Start the development server:
+```bash
+npm start
+# or
+yarn start
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+5. Follow the instructions in the terminal to open the app on your device or emulator.
 
-## Join the community
+## Project Structure
 
-Join our community of developers creating universal apps.
+```
+/DeepworkAI
+├── app/                      # Expo Router app directory
+│   ├── (auth)/               # Authentication routes
+│   │   ├── login.tsx
+│   │   ├── register.tsx
+│   │   └── forgot-password.tsx
+│   ├── (main)/               # Main app routes
+│   │   ├── index.tsx         # Dashboard screen
+│   │   ├── tasks/            # Task-related screens
+│   │   ├── focus/            # Focus mode screens
+│   │   ├── insights/         # Insights and analytics
+│   │   ├── settings/         # App settings
+│   │   └── _layout.tsx       # Main layout with navigation
+│   └── _layout.tsx           # Root layout
+├── components/               # Reusable components
+│   ├── common/               # Generic UI components
+│   ├── tasks/                # Task-related components
+│   ├── focus/                # Focus session components
+│   └── insights/             # Analytics components
+├── constants/                # App constants
+├── hooks/                    # Custom React hooks
+├── services/                 # API and service integrations
+│   ├── supabase/             # Supabase client and queries
+│   ├── ai/                   # AI service integration
+│   └── notifications/        # Notification services
+├── store/                    # State management
+├── types/                    # TypeScript type definitions
+└── utils/                    # Utility functions
+```
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- [Expo](https://expo.dev/)
+- [React Native](https://reactnative.dev/)
+- [Supabase](https://supabase.io/)
+- [React Native Paper](https://callstack.github.io/react-native-paper/)

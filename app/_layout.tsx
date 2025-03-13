@@ -1,39 +1,51 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import React, { useEffect } from 'react';
+import { Stack, useRouter, useSegments } from 'expo-router';
+import { PaperProvider } from 'react-native-paper';
+import { useColorScheme } from 'react-native';
+import useAuth from '../hooks/useAuth';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+// Simple auth context to manage authentication state
+export const AuthContext = React.createContext({
+  signIn: async (_email: string, _password: string) => {},
+  signUp: async (_email: string, _password: string, _fullName: string) => {},
+  signOut: async () => {},
+  user: null as any,
+  loading: false,
+});
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
+// Root layout component
 export default function RootLayout() {
+  const { user, loading, signIn, signUp, signOut } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
 
+  // Check if the user is authenticated and redirect accordingly
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    if (loading) return;
+
+    const inAuthGroup = segments[0] === '(auth)';
+
+    if (!user && !inAuthGroup) {
+      // Redirect to the login page if not authenticated
+      router.replace('/login');
+    } else if (user && inAuthGroup) {
+      // Redirect to the main page if authenticated
+      router.replace('/');
     }
-  }, [loaded]);
+  }, [user, loading, segments]);
 
-  if (!loaded) {
-    return null;
-  }
-
+  // Provide the auth context to the app
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <AuthContext.Provider value={{ signIn, signUp, signOut, user, loading }}>
+      <PaperProvider>
+        <Stack
+          screenOptions={{
+            headerShown: false,
+            animation: 'slide_from_right',
+          }}
+        />
+      </PaperProvider>
+    </AuthContext.Provider>
   );
 }
