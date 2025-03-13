@@ -46,14 +46,37 @@ EXPO_PUBLIC_SUPABASE_URL=your_supabase_url
 EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
-4. Start the development server:
+4. Set up the database (important):
+```bash
+# Install required packages for the setup script
+npm install @supabase/supabase-js dotenv
+
+# Run the database setup script
+node setup_database.js
+```
+
+Alternatively, you can set up the database manually by following the instructions in `README_DATABASE_SETUP.md`.
+
+5. Start the development server:
 ```bash
 npm start
 # or
 yarn start
 ```
 
-5. Follow the instructions in the terminal to open the app on your device or emulator.
+6. Follow the instructions in the terminal to open the app on your device or emulator.
+
+### Database Setup
+
+The application requires specific database tables to be created in your Supabase project. If you encounter any of these errors, follow the instructions below:
+
+- **Error**: `relation "public.users" does not exist`
+  - This means the database tables haven't been created yet. Run `node setup_database.js` to create them.
+
+- **Error**: `JSON object requested, multiple (or no) rows returned`
+  - This means there are users in the auth system but no corresponding records in the public.users table. Run `node fix_missing_users.js` to fix this issue.
+
+For detailed instructions, see `README_DATABASE_SETUP.md`.
 
 ## Project Structure
 

@@ -54,14 +54,70 @@ export default function useAuth() {
       const { data, error } = await supabase
         .from('users')
         .select('*')
-        .eq('id', userId)
-        .single();
+        .eq('id', userId);
 
       if (error) throw error;
-      setUser(data as User);
+      
+      // Check if we got any user data
+      if (data && data.length > 0) {
+        // Use the first record if multiple exist (shouldn't happen with proper RLS)
+        setUser(data[0] as User);
+      } else {
+        // No user record found, create one
+        await createUserProfile(userId);
+      }
     } catch (error: any) {
       console.error('Error fetching user profile:', error.message);
       // If we can't fetch the profile, at least set the basic user info
+      if (session?.user) {
+        setUser({
+          id: session.user.id,
+          email: session.user.email || '',
+          created_at: session.user.created_at || '',
+          updated_at: new Date().toISOString(),
+          full_name: null,
+          avatar_url: null,
+          preferences: null,
+          time_zone: null,
+          last_login: null,
+        });
+      }
+    }
+  };
+
+  const createUserProfile = async (userId: string) => {
+    try {
+      if (!session?.user) return;
+      
+      // Create a new user profile record
+      const newUser: Partial<User> = {
+        id: userId,
+        email: session.user.email || '',
+        created_at: session.user.created_at || new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        full_name: session.user.user_metadata?.full_name || null,
+        avatar_url: session.user.user_metadata?.avatar_url || null,
+        preferences: null,
+        time_zone: null,
+        last_login: new Date().toISOString(),
+      };
+      
+      const { data, error } = await supabase
+        .from('users')
+        .insert([newUser])
+        .select();
+      
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        setUser(data[0] as User);
+      } else {
+        // Fallback to basic user info if insert didn't return data
+        setUser(newUser as User);
+      }
+    } catch (error: any) {
+      console.error('Error creating user profile:', error.message);
+      // Set basic user info as fallback
       if (session?.user) {
         setUser({
           id: session.user.id,

@@ -28,7 +28,7 @@ export default function LoginScreen() {
     try {
       setFormError(null);
       await signIn(email, password);
-      router.replace('/');
+      router.replace('/(main)');
     } catch (error: any) {
       setFormError(error.message);
     }

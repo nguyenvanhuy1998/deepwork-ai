@@ -67,15 +67,55 @@ export const updateUserProfile = async (
   updates: Partial<User>
 ) => {
   try {
+    // First check if the user exists
+    const { data: existingUser, error: checkError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('id', userId);
+    
+    if (checkError) throw checkError;
+    
+    // If user doesn't exist, create a new record
+    if (!existingUser || existingUser.length === 0) {
+      // Get auth user data to create a complete profile
+      const { data: authUser } = await supabase.auth.getUser();
+      
+      if (!authUser || !authUser.user) {
+        throw new Error('Cannot find auth user data');
+      }
+      
+      // Create a new user profile with the updates
+      const newUser: Partial<User> = {
+        id: userId,
+        email: authUser.user.email || '',
+        created_at: authUser.user.created_at || new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        full_name: authUser.user.user_metadata?.full_name || null,
+        avatar_url: authUser.user.user_metadata?.avatar_url || null,
+        preferences: null,
+        time_zone: null,
+        last_login: new Date().toISOString(),
+        ...updates // Apply the updates to the new user
+      };
+      
+      const { data: insertData, error: insertError } = await supabase
+        .from('users')
+        .insert([newUser])
+        .select();
+      
+      if (insertError) throw insertError;
+      return insertData?.[0] || newUser;
+    }
+    
+    // User exists, update the record
     const { data, error } = await supabase
       .from('users')
       .update(updates)
       .eq('id', userId)
-      .select()
-      .single();
+      .select();
 
     if (error) throw error;
-    return data;
+    return data?.[0] || updates;
   } catch (error: any) {
     throw new Error(error.message || 'Error updating user profile');
   }

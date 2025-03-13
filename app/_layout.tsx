@@ -25,13 +25,17 @@ export default function RootLayout() {
     if (loading) return;
 
     const inAuthGroup = segments[0] === '(auth)';
+    const inMainGroup = segments[0] === '(main)';
 
     if (!user && !inAuthGroup) {
       // Redirect to the login page if not authenticated
       router.replace('/login');
     } else if (user && inAuthGroup) {
       // Redirect to the main page if authenticated
-      router.replace('/');
+      router.replace('/(main)');
+    } else if (user && !inAuthGroup && !inMainGroup && segments[0] !== undefined) {
+      // If user is authenticated and not in any group but trying to access a specific route
+      router.replace('/(main)');
     }
   }, [user, loading, segments]);
 

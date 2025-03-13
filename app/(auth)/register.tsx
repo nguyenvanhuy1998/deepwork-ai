@@ -40,7 +40,7 @@ export default function RegisterScreen() {
     try {
       setFormError(null);
       await signUp(email, password, fullName);
-      router.replace('/');
+      router.replace('/(main)');
     } catch (error: any) {
       setFormError(error.message);
     }
